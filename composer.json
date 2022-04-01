@@ -1,0 +1,19 @@
+{
+    "name": "dima/validator",
+    "description": "custom validator with sanitazer and error messages",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Dima\\Validator\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Dmitry Shmanko",
+            "email": "dimashaman@icloud.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
