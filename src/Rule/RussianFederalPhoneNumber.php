@@ -15,11 +15,14 @@ class RussianFederalPhoneNumber extends AbstractRule
             return self::MESSAGE;
         }
 
-        if(preg_match('/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/', (string) $value) > 0) {
-            return '7' . preg_replace('/^(\+|7|8)+|(\D)/', '', $value);
+        if (preg_match('/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/', (string) $value) > 0) {
+            $this->validatedValue = '7' . preg_replace('/^(\+|7|8)+|(\D)/', '', $value);
+
+            return;
         };
 
-        return self::MESSAGE;
+        $this->setError();
+
+        return;
     }
 }
-

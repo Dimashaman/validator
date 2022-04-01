@@ -11,10 +11,14 @@ class IntegerType extends AbstractRule
 
     public function validate($value)
     {
-        if((bool) filter_var($value, FILTER_VALIDATE_INT) || (string) $value === '0') {
-            return (int) $value;
+        if ((bool) filter_var($value, FILTER_VALIDATE_INT) || (string) $value === '0') {
+            $this->validatedValue = (int) $value;
+
+            return;
         };
 
-        return self::MESSAGE;
+        $this->setError();
+        
+        return;
     }
 }

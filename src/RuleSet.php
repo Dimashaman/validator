@@ -27,6 +27,12 @@ class RuleSet
         
         $this->rules = array_combine($dataKeys, $rules);
     }
+
+    public function createResult() {
+        foreach($this->rules as $validationRule) {
+            if($validationRule->
+        }
+    }
     
     private function constructRuleByName($name)
     {

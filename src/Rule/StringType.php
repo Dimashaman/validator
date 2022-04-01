@@ -12,9 +12,13 @@ class StringType extends AbstractRule
     public function validate($value)
     {
         if(is_scalar($value) || (is_object($value) && method_exists($value, '__toString'))) {
-            return (string) $value;
+            $this->validatedValue = (string) $value;
+
+            return;
         };
 
-        return self::MESSAGE;
+        $this->setError();
+
+        return;
     }
 }

@@ -6,16 +6,18 @@ use Dima\Validator\Rule\AbstractRule;
 
 class ArraySameType extends AbstractRule
 {
-    const MESSAGE = 'This input must be a same typed array';
-    const LABELED_MESSAGE = '{label} must be a same typed array';
+    protected $message = 'This input must be a same typed array';
 
     public function validate($value)
     {
         if ($this->array_really_unique($value)) {
-            return $value;
+            $this->validatedValue = $value;
+            return;
         };
 
-        return self::MESSAGE;
+        $this->setError();
+
+        return;
     }
 
     private function array_really_unique($array)

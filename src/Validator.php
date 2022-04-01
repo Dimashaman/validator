@@ -32,12 +32,11 @@ class Validator
         $result = [];
 
         foreach ($this->ruleSet->rules as $ruleKey => $ruleValidator) {
-            $result[$ruleKey] = $ruleValidator->validate($this->dataSet[$ruleKey]);
+            $ruleValidator->assignKey($ruleKey);
+            $ruleValidator->validate($this->dataSet[$ruleKey]);
         }
 
-        var_dump($result);
-
-        return;
+       return $this->ruleSet->createResult();
     }
 
     private function isJson($string)
