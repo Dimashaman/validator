@@ -7,19 +7,17 @@ use Dima\Validator\Rule\AbstractRule;
 class IntegerType extends AbstractRule
 {
     protected $message = 'This input must be an integer number';
-    const LABELED_MESSAGE = '{label} must be an integer number';
 
     public function validate()
     {
-        $value = $this->value;
-        if ((bool) filter_var($value, FILTER_VALIDATE_INT) || (string) $value === '0') {
-            $this->validatedValue = (int) $value;
-
-            return;
-        };
-
-        $this->setError();
+        $this->reset();
         
-        return;
+        if ((bool) filter_var($this->value, FILTER_VALIDATE_INT) || (string) $this->value === '0') {
+            $this->validatedValue = (int) $this->value;
+        } else {
+            $this->setError();
+        };
+        
+        return $this;
     }
 }

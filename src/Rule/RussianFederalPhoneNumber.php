@@ -11,18 +11,14 @@ class RussianFederalPhoneNumber extends AbstractRule
 
     public function validate()
     {
-        if (!is_scalar($this->value)) {
-            return $this->message;
-        }
+        $this->reset();
 
-        if (preg_match('/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/', (string) $this->value) > 0) {
+        if (!is_scalar($this->value) || preg_match('/^((8|\+7|7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/', (string) $this->value) > 0) {
             $this->validatedValue = '7' . preg_replace('/^(\+|7|8)+|(\D)/', '', $this->value);
-
-            return;
-        };
-
-        $this->setError();
-
-        return;
+        } else {
+            $this->setError();
+        }
+        
+        return $this;
     }
 }

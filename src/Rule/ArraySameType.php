@@ -10,27 +10,18 @@ class ArraySameType extends AbstractRule
 
     public function validate()
     {
-        if ($this->array_really_unique($this->value)) {
-            $this->validatedValue = $this->value;
-            return;
-        };
+        $this->reset();
+        $type = $this->options ? gettype($this->options) : gettype($this->value[0]);
 
-        $this->setError();
-
-        return;
-    }
-
-    private function array_really_unique($array)
-    {
-        foreach ($array as $item) {
-            foreach ($array as $item2) {
-
-                if (gettype($item) != gettype($item2)) {
-                    break;
-                    return false;
-                }
+        foreach ($this->value as $element) {
+            if (gettype($element) != $type) {
+                $this->setError();
+                break;
             }
         }
-        return true;
+
+        $this->validatedValue = $this->hasError() ? null : $this->value;
+        
+        return $this;
     }
 }

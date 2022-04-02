@@ -10,15 +10,19 @@ class ArrayStructure extends AbstractRule
 
     public function validate()
     {
-        $array_diff_key_recursive = $this->keyMatch($this->value, $this->options[$this->getKey()]);
-
+        $this->reset();
+        // print_r($this->value);
+        // print_r('value');
+        // print_r($this->options);
+        $array_diff_key_recursive = $this->keyMatch($this->value, $this->options);
+        // var_dump($array_diff_key_recursive);
         if (empty($array_diff_key_recursive)) {
             $this->validatedValue = $this->value;
         } else {
             $this->setError();
         }
 
-        return;
+        return $this;
     }
 
     /** return an array that contains keys that do not match between $array and $compare, checking recursively.

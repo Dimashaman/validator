@@ -26,7 +26,7 @@ class Validator
     public function validate()
     {
         if ($this->dataSet == null) {
-            var_dump('dataset is null');
+            
             return;
         }
 

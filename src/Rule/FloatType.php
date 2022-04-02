@@ -10,14 +10,14 @@ class FloatType extends AbstractRule
 
     public function validate()
     {
-        if (floatval($this->value)) {
-            $this->validatedValue = floatval($this->value);
+        $this->reset();
 
-            return;
+        if (is_float($this->value)) {
+            $this->validatedValue = floatval($this->value);
+        } else {
+            $this->setError();
         };
 
-        $this->setError();
-
-        return;
+        return $this;
     }
 }

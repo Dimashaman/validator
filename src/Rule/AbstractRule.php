@@ -17,7 +17,7 @@ abstract class AbstractRule
 
     public function __construct($options = null)
     {
-        if($options) {
+        if ($options) {
             $this->options = $options;
         }
     }
@@ -50,18 +50,36 @@ abstract class AbstractRule
         return $this->validatedValue;
     }
 
+    public function hasError() {
+        return $this->error;
+    }
+
     protected function setError()
     {
         $this->error = true;
+
+        return $this;
+    }
+
+    protected function reset()
+    {
+        $this->error = false;
+        $this->validatedValue = null;
+
+        return $this;
     }
 
     public function assignValue($value)
     {
         $this->value = $value;
+
+        return $this;
     }
 
     public function assignKey($key)
     {
         $this->key = $key;
+
+        return $this;
     }
 }
