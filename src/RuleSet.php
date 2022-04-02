@@ -17,21 +17,16 @@ class RuleSet
 
     public $rules = [];
 
-    public function resolveRulesWithKeys(array $ruleNames, array $dataKeys)
+    public function prepareRules(array $rules, $data)
     {
-        $rules = [];
-        
-        foreach ($ruleNames as $ruleName) {
-            $rules[] = $this->constructRuleByName($ruleName);
+        $keys = $data->getKeys();
+        foreach ($rules as $key => $rule) {
+            // $rule = $this->constructRuleByName($ruleName);
+            $rule->assignKey($keys[$key]);
+            $rule->assignValue($data->getValueByKey($rule->getKey()));
         }
-        
-        $this->rules = array_combine($dataKeys, $rules);
-    }
 
-    public function createResult() {
-        foreach($this->rules as $validationRule) {
-            if($validationRule->
-        }
+        $this->rules = $rules;
     }
     
     private function constructRuleByName($name)

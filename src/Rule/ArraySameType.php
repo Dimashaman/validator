@@ -8,10 +8,10 @@ class ArraySameType extends AbstractRule
 {
     protected $message = 'This input must be a same typed array';
 
-    public function validate($value)
+    public function validate()
     {
-        if ($this->array_really_unique($value)) {
-            $this->validatedValue = $value;
+        if ($this->array_really_unique($this->value)) {
+            $this->validatedValue = $this->value;
             return;
         };
 
@@ -24,7 +24,7 @@ class ArraySameType extends AbstractRule
     {
         foreach ($array as $item) {
             foreach ($array as $item2) {
-                var_dump(gettype($item));
+
                 if (gettype($item) != gettype($item2)) {
                     break;
                     return false;

@@ -3,10 +3,11 @@
 namespace Dima\Validator;
 
 use InvalidArgumentException;
+use Dima\Validator\ValidationResult;
 
 class Validator
 {
-    public function __construct(array $rules = [], string $json)
+    public function __construct($rules = [], string $json)
     {
         if (! is_array($rules)) {
             throw new \InvalidArgumentException('Data passed to validator is not an array');
@@ -16,27 +17,28 @@ class Validator
             throw new \InvalidArgumentException('Abort. This is not a valid json');
         }
 
+        $this->dataSet = new ValidationDataSet($json);
+        
         $this->ruleSet = new RuleSet();
-
-        $this->dataSet = json_decode($json, true);
-
-        $this->ruleSet->resolveRulesWithKeys($rules, array_keys($this->dataSet));
+        $this->ruleSet->prepareRules($rules, $this->dataSet);
     }
 
     public function validate()
     {
         if ($this->dataSet == null) {
+            var_dump('dataset is null');
             return;
         }
 
         $result = [];
 
-        foreach ($this->ruleSet->rules as $ruleKey => $ruleValidator) {
-            $ruleValidator->assignKey($ruleKey);
-            $ruleValidator->validate($this->dataSet[$ruleKey]);
+        foreach ($this->ruleSet->rules as $ruleValidator) {
+            $ruleValidator->validate();
         }
 
-       return $this->ruleSet->createResult();
+        $validationResult = new ValidationResult($this->ruleSet);
+
+        return $validationResult->getAssoc();
     }
 
     private function isJson($string)

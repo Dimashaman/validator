@@ -8,10 +8,10 @@ class FloatType extends AbstractRule
 {
     protected $message = 'This input must be a float number';
 
-    public function validate($value)
+    public function validate()
     {
-        if (floatval($value)) {
-            $this->validatedValue = floatval($value);
+        if (floatval($this->value)) {
+            $this->validatedValue = floatval($this->value);
 
             return;
         };
