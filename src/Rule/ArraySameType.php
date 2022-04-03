@@ -6,9 +6,9 @@ use Dima\Validator\Rule\AbstractRule;
 
 class ArraySameType extends AbstractRule
 {
-    protected $message = 'This input must be a same typed array';
+    protected string $message = 'This input must be a same typed array';
 
-    public function validate()
+    public function validate() : AbstractRule
     {
         $this->reset();
         $type = $this->options ? gettype($this->options) : gettype($this->value[0]);

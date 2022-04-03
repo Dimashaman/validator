@@ -4,9 +4,9 @@ namespace Dima\Validator;
 
 class ValidationDataSet
 {
-    private $data = null;
+    private array $data = [];
 
-    private $keys = null;
+    private array $keys = [];
     
     public function __construct($json)
     {

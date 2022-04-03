@@ -6,9 +6,9 @@ use Dima\Validator\Rule\AbstractRule;
 
 class StringType extends AbstractRule
 {
-    protected $message = 'This input must be an string';
+    protected string $message = 'This input must be an string';
 
-    public function validate()
+    public function validate() : AbstractRule
     {
         $this->reset();
 

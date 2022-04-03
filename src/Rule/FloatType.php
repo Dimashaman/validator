@@ -6,9 +6,9 @@ use Dima\Validator\Rule\AbstractRule;
 
 class FloatType extends AbstractRule
 {
-    protected $message = 'This input must be a float number';
+    protected string $message = 'This input must be a float number';
 
-    public function validate()
+    public function validate() : AbstractRule
     {
         $this->reset();
 

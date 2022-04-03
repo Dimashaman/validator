@@ -2,12 +2,16 @@
 
 namespace Dima\Validator;
 
-use InvalidArgumentException;
+use Dima\Validator\RuleSet;
 use Dima\Validator\ValidationResult;
+use Dima\Validator\ValidationDataSet;
 
 class Validator
 {
-    public function __construct($rules = [], string $json)
+    private RuleSet $ruleSet;
+    private ValidationDataSet $dataSet;
+    
+    public function __construct(array $rules, string $json)
     {
         if (! is_array($rules)) {
             throw new \InvalidArgumentException('Data passed to validator is not an array');
@@ -26,7 +30,6 @@ class Validator
     public function validate()
     {
         if ($this->dataSet == null) {
-            
             return;
         }
 

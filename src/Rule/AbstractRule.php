@@ -2,32 +2,34 @@
 declare(strict_types=1);
 namespace Dima\Validator\Rule;
 
+use Dima\Validator\ValidationResult;
+
 abstract class AbstractRule
 {
-    protected $message;
-    protected $error = false;
-    protected $value = null;
-    protected $options = null;
-    protected $validatedValue = null;
+    protected string $message;
+    protected bool $error = false;
+    protected mixed $value = null;
+    protected mixed $options = null;
+    protected mixed $validatedValue = null;
 
-    protected $key = null;
-    protected $success = false;
+    protected ?string $key = null;
+    protected bool $success = false;
 
-    abstract public function validate();
+    abstract public function validate() : AbstractRule;
 
-    public function __construct($options = null)
+    public function __construct(mixed $options = null)
     {
         if ($options) {
             $this->options = $options;
         }
     }
 
-    public function getKey()
+    public function getKey() : ?string
     {
         return $this->key;
     }
 
-    public function getMessage()
+    public function getMessage() : ?string
     {
         if ($this->error) {
             return $this->message;
@@ -36,7 +38,7 @@ abstract class AbstractRule
         return null;
     }
 
-    public function getLabeledMessage()
+    public function getLabeledMessage() : ?string
     {
         if ($this->error) {
             return $this->message;
@@ -45,23 +47,24 @@ abstract class AbstractRule
         return null;
     }
 
-    public function getValidatedValue()
+    public function getValidatedValue() : mixed
     {
         return $this->validatedValue;
     }
 
-    public function hasError() {
+    public function hasError() : bool
+    {
         return $this->error;
     }
 
-    protected function setError()
+    protected function setError() : AbstractRule
     {
         $this->error = true;
 
         return $this;
     }
 
-    protected function reset()
+    protected function reset() : AbstractRule
     {
         $this->error = false;
         $this->validatedValue = null;
@@ -69,14 +72,14 @@ abstract class AbstractRule
         return $this;
     }
 
-    public function assignValue($value)
+    public function assignValue(mixed $value) : AbstractRule
     {
         $this->value = $value;
 
         return $this;
     }
 
-    public function assignKey($key)
+    public function assignKey(string $key) : AbstractRule
     {
         $this->key = $key;
 

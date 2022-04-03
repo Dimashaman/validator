@@ -6,9 +6,9 @@ use Dima\Validator\Rule\AbstractRule;
 
 class IntegerType extends AbstractRule
 {
-    protected $message = 'This input must be an integer number';
+    protected string $message = 'This input must be an integer number';
 
-    public function validate()
+    public function validate() : AbstractRule
     {
         $this->reset();
         

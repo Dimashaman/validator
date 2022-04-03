@@ -6,9 +6,9 @@ use Dima\Validator\Rule\AbstractRule;
 
 class ArrayStructure extends AbstractRule
 {
-    protected $message = 'This input must have correct structure';
+    protected string $message = 'This input must have correct structure';
 
-    public function validate()
+    public function validate() : AbstractRule
     {
         $this->reset();
         // print_r($this->value);
@@ -25,15 +25,7 @@ class ArrayStructure extends AbstractRule
         return $this;
     }
 
-    /** return an array that contains keys that do not match between $array and $compare, checking recursively.
-    * It's bi-directional so it doesn't matter which param is first
-    *
-    * @param $array an array to compare
-    * @param $compare another array
-    *
-    * @return an array that contains keys that do not match between $array and $compare
-    */
-    public function keyMatch($array, $compare)
+    public function keyMatch(array $array, array $compare) : array
     {
         $output = array();
         foreach ($array as $key=>$value) {

@@ -2,10 +2,12 @@
 
 namespace Dima\Validator;
 
+use Dima\Validator\RuleSet;
+
 class ValidationResult
 {
-    public $success = true;
-    private $ruleSet = null;
+    public bool $success = true;
+    private RuleSet $ruleSet;
 
     public function __construct($ruleSet)
     {

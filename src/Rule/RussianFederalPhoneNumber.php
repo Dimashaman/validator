@@ -6,10 +6,9 @@ use Dima\Validator\Rule\AbstractRule;
 
 class RussianFederalPhoneNumber extends AbstractRule
 {
-    protected $message = 'This input must be a correct phone number';
-    const LABELED_MESSAGE = '{label} must be an string';
+    protected string $message = 'This input must be a correct phone number';
 
-    public function validate()
+    public function validate() : AbstractRule
     {
         $this->reset();
 

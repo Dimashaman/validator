@@ -6,16 +6,7 @@ use Dima\Validator\Rule\Integer;
 
 class RuleSet
 {
-    private $rulesClasses = [
-        'StringType',
-        'IntegerType',
-        'FloatType',
-        'RussianFederalPhoneNumber',
-        'ArraySameType',
-        'ArraySameKeys',
-    ];
-
-    public $rules = [];
+    public array $rules = [];
 
     public function prepareRules(array $rules, $data)
     {
