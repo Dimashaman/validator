@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
+
 namespace Dima\Validator\Rule;
 
-use Dima\Validator\ValidationResult;
 
 abstract class AbstractRule
 {
@@ -12,10 +12,7 @@ abstract class AbstractRule
     protected mixed $options = null;
     protected mixed $validatedValue = null;
 
-    protected ?string $key = null;
-    protected bool $success = false;
-
-    abstract public function validate() : AbstractRule;
+    abstract public function validate($value): AbstractRule;
 
     public function __construct(mixed $options = null)
     {
@@ -24,12 +21,7 @@ abstract class AbstractRule
         }
     }
 
-    public function getKey() : ?string
-    {
-        return $this->key;
-    }
-
-    public function getMessage() : ?string
+    public function getMessage(): ?string
     {
         if ($this->error) {
             return $this->message;
@@ -38,33 +30,24 @@ abstract class AbstractRule
         return null;
     }
 
-    public function getLabeledMessage() : ?string
-    {
-        if ($this->error) {
-            return $this->message;
-        }
-
-        return null;
-    }
-
-    public function getValidatedValue() : mixed
+    public function getValidatedValue(): mixed
     {
         return $this->validatedValue;
     }
 
-    public function hasError() : bool
+    public function hasError(): bool
     {
         return $this->error;
     }
 
-    protected function setError() : AbstractRule
+    protected function setError(): AbstractRule
     {
         $this->error = true;
 
         return $this;
     }
 
-    protected function reset() : AbstractRule
+    protected function reset(): AbstractRule
     {
         $this->error = false;
         $this->validatedValue = null;
@@ -72,16 +55,9 @@ abstract class AbstractRule
         return $this;
     }
 
-    public function assignValue(mixed $value) : AbstractRule
+    public function assignValue(mixed $value): AbstractRule
     {
         $this->value = $value;
-
-        return $this;
-    }
-
-    public function assignKey(string $key) : AbstractRule
-    {
-        $this->key = $key;
 
         return $this;
     }

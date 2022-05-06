@@ -2,26 +2,24 @@
 
 namespace Dima\Validator\Rule;
 
-use Dima\Validator\Rule\AbstractRule;
-
 class ArraySameType extends AbstractRule
 {
     protected string $message = 'This input must be a same typed array';
 
-    public function validate() : AbstractRule
+    public function validate($value): AbstractRule
     {
         $this->reset();
-        $type = $this->options ? gettype($this->options) : gettype($this->value[0]);
+        $typeRule = new $this->options();
 
-        foreach ($this->value as $element) {
-            if (gettype($element) != $type) {
+        foreach ($value as $element) {
+            if ($typeRule->validate($element)->hasError()) {
                 $this->setError();
                 break;
             }
         }
 
-        $this->validatedValue = $this->hasError() ? null : $this->value;
-        
+        $this->validatedValue = $this->hasError() ? null : $value;
+
         return $this;
     }
 }

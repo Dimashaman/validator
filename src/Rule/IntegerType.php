@@ -2,22 +2,20 @@
 
 namespace Dima\Validator\Rule;
 
-use Dima\Validator\Rule\AbstractRule;
-
 class IntegerType extends AbstractRule
 {
     protected string $message = 'This input must be an integer number';
 
-    public function validate() : AbstractRule
+    public function validate($value): AbstractRule
     {
         $this->reset();
-        
-        if ((bool) filter_var($this->value, FILTER_VALIDATE_INT) || (string) $this->value === '0') {
-            $this->validatedValue = (int) $this->value;
+
+        if (filter_var($value, FILTER_VALIDATE_INT) || (string)$value === '0') {
+            $this->validatedValue = (int)$value;
         } else {
             $this->setError();
-        };
-        
+        }
+
         return $this;
     }
 }

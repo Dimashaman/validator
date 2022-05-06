@@ -2,51 +2,104 @@
 
 namespace Dima\Validator;
 
-use Dima\Validator\RuleSet;
-use Dima\Validator\ValidationResult;
-use Dima\Validator\ValidationDataSet;
+use Exception;
+use InvalidArgumentException;
 
 class Validator
 {
     private RuleSet $ruleSet;
-    private ValidationDataSet $dataSet;
-    
+
+    /**
+     * @param RuleSet $ruleSet
+     */
+    public function setRuleSet(RuleSet $ruleSet): void
+    {
+        $this->ruleSet = $ruleSet;
+    }
+
+    /**
+     * @param DataSet $dataSet
+     */
+    public function setDataSet(DataSet $dataSet): void
+    {
+        $this->dataSet = $dataSet;
+    }
+
+    private DataSet $dataSet;
+    private array $errors;
+    private array $result;
+
+    /**
+     * @return array
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @return array
+     */
+    public function getResult(): array
+    {
+        return $this->result;
+    }
+
     public function __construct(array $rules, string $json)
     {
-        if (! is_array($rules)) {
-            throw new \InvalidArgumentException('Data passed to validator is not an array');
+        if (!$rules) {
+            throw new InvalidArgumentException('Data passed to validator is not an array');
         }
 
         if (!$this->isJson($json)) {
-            throw new \InvalidArgumentException('Abort. This is not a valid json');
+            throw new InvalidArgumentException('Abort. This is not a valid json');
         }
 
-        $this->dataSet = new ValidationDataSet($json);
-        
-        $this->ruleSet = new RuleSet();
-        $this->ruleSet->prepareRules($rules, $this->dataSet);
+        $this->dataSet = new DataSet($json);
+        $this->ruleSet = new RuleSet($rules);
     }
 
-    public function validate()
+    /**
+     * @throws Exception
+     */
+    public function validate(): array
     {
-        if ($this->dataSet == null) {
-            return;
-        }
+        $this->reset();
 
         $result = [];
+        $errors = [];
 
-        foreach ($this->ruleSet->rules as $ruleValidator) {
-            $ruleValidator->validate();
+        $compareStructure = array_diff_key($this->dataSet->getData(), $this->ruleSet->getRules());
+
+        if (count($compareStructure)) {
+            throw new Exception(sprintf('Abort. Invalid Structure, missing keys: %s', implode(',', $compareStructure)));
+        }
+        foreach ($this->dataSet->getData() as $key => $value) {
+            $validationResult = $this->ruleSet->getByKey($key)->validate($value);
+
+            if ($validationResult->hasError()) {
+                $errors[$key] = $validationResult->getMessage();
+            } else {
+                $result[$key] = $validationResult->getValidatedValue();
+            }
+
         }
 
-        $validationResult = new ValidationResult($this->ruleSet);
+        $this->errors = $errors;
+        $this->result = $result;
 
-        return $validationResult->getAssoc();
+        return count($errors) ? $errors : $result;
     }
 
-    private function isJson($string)
+    private function reset(): void
     {
-        json_decode($string);
+        $this->errors = [];
+        $this->result = [];
+    }
+
+    private function isJson($string): bool
+    {
+        json_decode($string, true);
         return json_last_error() === JSON_ERROR_NONE;
     }
 }

@@ -2,18 +2,16 @@
 
 namespace Dima\Validator\Rule;
 
-use Dima\Validator\Rule\AbstractRule;
-
 class StringType extends AbstractRule
 {
     protected string $message = 'This input must be an string';
 
-    public function validate() : AbstractRule
+    public function validate($value): AbstractRule
     {
         $this->reset();
 
-        if (is_string($this->value)) {
-            $this->validatedValue = (string) $this->value;
+        if (is_string($value)) {
+            $this->validatedValue = (string)$value;
         } else {
             $this->setError();
         }

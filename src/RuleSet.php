@@ -2,21 +2,25 @@
 
 namespace Dima\Validator;
 
-use Dima\Validator\Rule\Integer;
-
 class RuleSet
 {
-    public array $rules = [];
+    private array $rules;
 
-    public function prepareRules(array $rules, $data)
+    /**
+     * @return array
+     */
+    public function getRules(): array
     {
-        $keys = $data->getKeys();
-        foreach ($rules as $key => $rule) {
-            // $rule = $this->constructRuleByName($ruleName);
-            $rule->assignKey($keys[$key]);
-            $rule->assignValue($data->getValueByKey($rule->getKey()));
-        }
+        return $this->rules;
+    }
 
+    public function __construct(array $rules)
+    {
         $this->rules = $rules;
+    }
+
+    public function getByKey($key)
+    {
+        return $this->rules[$key];
     }
 }
