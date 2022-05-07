@@ -1,11 +1,11 @@
 <?php
 
-namespace Dima\Validator;
+namespace Dima\Sanitizer;
 
 use Exception;
 use InvalidArgumentException;
 
-class Validator
+class Sanitizer
 {
     private RuleSet $ruleSet;
 

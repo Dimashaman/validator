@@ -1,7 +1,6 @@
 <?php
-declare(strict_types=1);
 
-namespace Dima\Validator\Rule;
+namespace Dima\Sanitizer\Rule;
 
 
 abstract class AbstractRule

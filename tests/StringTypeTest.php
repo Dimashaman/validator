@@ -3,7 +3,7 @@
 namespace Dima\Validation\Rule;
 
 use PHPUnit\Framework\TestCase;
-use Dima\Validator\Rule\StringType;
+use Dima\Sanitizer\Rule\StringType;
 
 class StringTypeTest extends TestCase
 {

@@ -1,13 +1,8 @@
 <?php
 
-namespace Dima\Validation\Rule;
+namespace Dima\Sanitizer\Rule;
 
-use Dima\Validator\Rule\ArraySameType;
-use Dima\Validator\Rule\IntegerType;
-use Dima\Validator\Rule\RussianFederalPhoneNumber;
-use Dima\Validator\Rule\StringType;
 use PHPUnit\Framework\TestCase;
-use Dima\Validator\Rule\ArrayStructure;
 
 class ArrayStructureTest extends TestCase
 {
@@ -43,12 +38,12 @@ class ArrayStructureTest extends TestCase
 
     public function testRecursiveStructure()
     {
-        $substructure = ['name' => (new StringType()), 'phone' => (new RussianFederalPhoneNumber())];
+        $substructure = ['name' => (new StringType()), 'phone' => (new RussianFederalPhoneNumber()), 'contacts' => (new ArraySameType(StringType::class))];
         $structure = ["id" => (new IntegerType()), "userdata" => (new ArrayStructure($substructure))];
 
         $rule = new ArrayStructure($structure);
 
-        $this->assertNotNull($rule->validate(["id" => 1, "userdata" => ['name' => 'ivan', "phone" => "+79963433704"]])->getValidatedValue());
+        $this->assertNotNull($rule->validate(["id" => 1, "userdata" => ['name' => 'ivan', "phone" => "+79963433704", "contacts" => ['John', 'Ada']]])->getValidatedValue());
         $this->assertNotNull($rule->validate(["id" => 1, "userdata" => ['name' => 44, "phone" => "+79963433704"]])->getMessage());
     }
 }

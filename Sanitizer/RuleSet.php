@@ -1,6 +1,6 @@
 <?php
 
-namespace Dima\Validator;
+namespace Dima\Sanitizer;
 
 class RuleSet
 {

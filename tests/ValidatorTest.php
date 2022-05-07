@@ -1,11 +1,11 @@
 <?php
 
-namespace Dima\Validator;
+namespace Dima\Sanitizer;
 
 use PHPUnit\Framework\TestCase;
-use Dima\Validator\Rule\StringType;
-use Dima\Validator\Rule\IntegerType;
-use Dima\Validator\Rule\RussianFederalPhoneNumber;
+use Dima\Sanitizer\Rule\StringType;
+use Dima\Sanitizer\Rule\IntegerType;
+use Dima\Sanitizer\Rule\RussianFederalPhoneNumber;
 
 class ValidatorTest extends TestCase
 {
@@ -19,7 +19,7 @@ class ValidatorTest extends TestCase
 
         $json = '{"foo": "123", "bar": "asd", "baz": "8 (950) 288-56-23"}';
 
-        $validator = new Validator($rules, $json);
+        $validator = new Sanitizer($rules, $json);
 
         $expectedResult = [
             "foo" => 123,
@@ -39,7 +39,7 @@ class ValidatorTest extends TestCase
 
         $json = '{"foo": "123абв", "bar": "260557"}';
 
-        $validator = new Validator($rules, $json);
+        $validator = new Sanitizer($rules, $json);
 
         $expectedResult = [
             "foo" => 'This input must be an integer number',

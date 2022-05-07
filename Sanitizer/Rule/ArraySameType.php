@@ -1,6 +1,6 @@
 <?php
 
-namespace Dima\Validator\Rule;
+namespace Dima\Sanitizer\Rule;
 
 class ArraySameType extends AbstractRule
 {
