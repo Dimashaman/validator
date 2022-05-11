@@ -2,8 +2,8 @@
 
 namespace Dima\Sanitizer;
 
+use Dima\Sanitizer\Rule\ArrayStructure;
 use Dima\Sanitizer\Rule\RuleInterface;
-use Exception;
 use InvalidArgumentException;
 
 class Sanitizer
@@ -29,42 +29,16 @@ class Sanitizer
         $this->ruleSet = new RuleSet($rules);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function sanitize(): array
-    {
-        $result = [];
-        $errors = [];
-
-        $compareStructure = array_diff_key($this->dataSet->getData(), $this->ruleSet->getRules());
-
-        if (count($compareStructure)) {
-            throw new Exception(sprintf('Abort. Invalid Structure, missing keys: %s', implode(',', $compareStructure)));
-        }
-        foreach ($this->dataSet->getData() as $key => $value) {
-            $validationResult = $this->ruleSet->getByKey($key)->validate($value);
-
-            if ($validationResult->hasError) {
-                $errors[$key] = $validationResult->getErrorMessage();
-            } else {
-                $result[$key] = $validationResult->getNormalizedValue();
-            }
-
-        }
-
-        if (count($errors)) {
-            $result = null;
-
-            return $errors;
-        }
-
-        return $result;
-    }
-
     private function isJson($string): bool
     {
         json_decode($string, true);
         return json_last_error() === JSON_ERROR_NONE;
+    }
+
+    public function sanitize(): array
+    {
+        $result = (new ArrayStructure($this->ruleSet->getRules()))->validate($this->dataSet->getData());
+
+        return $result->hasError ? $result->getErrors() : $result->getNormalizedValues();
     }
 }
