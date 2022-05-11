@@ -10,10 +10,10 @@ class IntegerTypeTest extends TestCase
     {
         $rule = new IntegerType();
 
-        $this->assertEquals(40, $rule->validate(40)->getValidatedValue());
-        $this->assertEquals(null, $rule->validate('abc')->getValidatedValue());
-        $this->assertEquals(null, $rule->validate('123abc123')->getValidatedValue());
-        $this->assertNull($rule->validate(38)->getMessage());
-        $this->assertNotNull($rule->validate(38.7)->getMessage());
+        $this->assertEquals(40, $rule->validate(40)->getNormalizedValue());
+        $this->assertEquals(null, $rule->validate('abc')->getNormalizedValue());
+        $this->assertEquals(null, $rule->validate('123abc123')->getNormalizedValue());
+        $this->assertFalse($rule->validate(38)->hasError);
+        $this->assertNotNull($rule->validate(38.7)->getErrorMessage());
     }
 }

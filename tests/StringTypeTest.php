@@ -11,10 +11,10 @@ class StringTypeTest extends TestCase
     {
         $rule = new StringType();
 
-        $this->assertEquals("40", $rule->validate("40")->getValidatedValue());
-        $this->assertEquals('abc', $rule->validate('abc')->getValidatedValue());
-        $this->assertEquals('123abc123', $rule->validate('123abc123')->getValidatedValue());
-        $this->assertNull($rule->validate(38)->getValidatedValue());
-        $this->assertNotNull($rule->validate(38.7)->getMessage());
+        $this->assertEquals("40", $rule->validate("40")->getNormalizedValue());
+        $this->assertEquals('abc', $rule->validate('abc')->getNormalizedValue());
+        $this->assertEquals('123abc123', $rule->validate('123abc123')->getNormalizedValue());
+        $this->assertNull($rule->validate(38)->getNormalizedValue());
+        $this->assertNotNull($rule->validate(38.7)->getErrorMessage());
     }
 }

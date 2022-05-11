@@ -7,7 +7,7 @@ use Dima\Sanitizer\Rule\StringType;
 use Dima\Sanitizer\Rule\IntegerType;
 use Dima\Sanitizer\Rule\RussianFederalPhoneNumber;
 
-class ValidatorTest extends TestCase
+class SanitizerTest extends TestCase
 {
     public function testExampleOne()
     {
@@ -19,7 +19,7 @@ class ValidatorTest extends TestCase
 
         $json = '{"foo": "123", "bar": "asd", "baz": "8 (950) 288-56-23"}';
 
-        $validator = new Sanitizer($rules, $json);
+        $sanitizer = new Sanitizer($rules, $json);
 
         $expectedResult = [
             "foo" => 123,
@@ -27,7 +27,7 @@ class ValidatorTest extends TestCase
             "baz" => "79502885623",
         ];
 
-        $this->assertEquals($expectedResult, $validator->validate());
+        $this->assertEquals($expectedResult, $sanitizer->sanitize());
     }
 
     public function testExamplesTwoThree()
@@ -39,13 +39,13 @@ class ValidatorTest extends TestCase
 
         $json = '{"foo": "123абв", "bar": "260557"}';
 
-        $validator = new Sanitizer($rules, $json);
+        $sanitizer = new Sanitizer($rules, $json);
 
         $expectedResult = [
             "foo" => 'This input must be an integer number',
             "bar" => 'This input must be a correct phone number',
         ];
 
-        $this->assertEquals($expectedResult, $validator->validate());
+        $this->assertEquals($expectedResult, $sanitizer->sanitize());
     }
 }

@@ -2,20 +2,22 @@
 
 namespace Dima\Sanitizer\Rule;
 
-class StringType extends AbstractRule
-{
-    protected string $message = 'This input must be an string';
+use Dima\Sanitizer\RuleResult;
 
-    public function validate($value): AbstractRule
+class StringType implements RuleInterface
+{
+    protected string $message = 'This input must be a string';
+
+    public function validate($value): RuleResult
     {
-        $this->reset();
+        $validationResult = new RuleResult();
 
         if (is_string($value)) {
-            $this->validatedValue = (string)$value;
+            $validationResult->normalizedValue = $value;
         } else {
-            $this->setError();
+            $validationResult->setError($this->message);
         }
 
-        return $this;
+        return $validationResult;
     }
 }

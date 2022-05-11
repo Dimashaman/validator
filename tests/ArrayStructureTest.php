@@ -6,44 +6,113 @@ use PHPUnit\Framework\TestCase;
 
 class ArrayStructureTest extends TestCase
 {
-
-
-    public function testValidation()
+    public function testPositiveStructure()
     {
-        $structure = ["foo" => (new StringType()), "bar" => (new IntegerType()), "baz" => (new RussianFederalPhoneNumber())];
-        $rule = new ArrayStructure($structure);
+        $rule = new ArrayStructure([
+            "firstName" => new StringType(),
+            "lastName" => new StringType(),
+        ]);
 
-        $this->assertNotNull($rule->validate(["foo" => "1", "bar" => 1, "baz" => '+79963433704'])->getValidatedValue());
-        $this->assertNotNull($rule->validate(["foo" => "1", "bar" => "abc", "baz" => '2605066'])->getMessage());
-        $this->assertEquals('This input must have correct structure', $rule->validate(["foo" => "1", "bar" => "abc", "baz" => '2605066'])->getMessage());
-//        $this->assertNotNull($rule->validate(["Ford" => '1', "german" => ["BMW" => '11', "AUDI" => '7', "PORSCHE" => '1'], "Fiat" => '2'])->getMessage());
-//        $this->assertNull($rule->validate(["Ford" => '1', "german" => ["BMW" => '11', "AUDI" => '7', "PORSCHE" => '1'], "Fiat" => '2'])->getValidatedValue());
+        $result = $rule->validate([
+            "firstName" => "Василий",
+            "lastName" => "Пупкин"
+        ]);
+
+        $this->assertEquals([
+            "firstName" => "Василий",
+            "lastName" => "Пупкин"
+        ], $result->getNormalizedValues());
     }
 
-    public function testComplexStructure()
+    public function testPositiveRecursiveStructure()
     {
-        $structure = ["foo" => (new StringType()), "bar" => (new IntegerType()), "baz" => (new RussianFederalPhoneNumber()), "biz" => (
-        new ArraySameType(new StringType())
-        )];
-        $rule = new ArrayStructure($structure);
+        $rule = new ArrayStructure([
+            "firstName" => new StringType(),
+            "lastName" => new StringType(),
+            "address" => new ArrayStructure([
+                "street" => new StringType(),
+                "city" => new StringType(),
+            ])
+        ]);
 
-        $this->assertNotNull($rule->validate(["foo" => "1", "bar" => 1, "baz" => '+79963433704', "biz" => ['hello', 'world']])->getValidatedValue());
-        $this->assertNotNull($rule->validate(["foo" => "1", "bar" => "abc", "baz" => '2605066'])->getMessage());
-        $this->assertEquals('This input must have correct structure', $rule->validate(["foo" => "1", "bar" => "abc", "baz" => '2605066'])->getMessage());
-        $this->assertEquals('This input must have correct structure', $rule->validate(["foo" => "1", "bar" => "abc", "baz" => '2605066', "biz" => ['hello', 1]])->getMessage());
-        $this->assertEquals(["foo" => "1", "bar" => 2, "baz" => '+79963433704', "biz" => ['hello', 'world']], $rule->validate(["foo" => "1", "bar" => 2, "baz" => '+79963433704', "biz" => ['hello', 'world']])->getValidatedValue());
-//        $this->assertNotNull($rule->validate(["Ford" => '1', "german" => ["BMW" => '11', "AUDI" => '7', "PORSCHE" => '1'], "Fiat" => '2'])->getMessage());
-//        $this->assertNull($rule->validate(["Ford" => '1', "german" => ["BMW" => '11', "AUDI" => '7', "PORSCHE" => '1'], "Fiat" => '2'])->getValidatedValue());
+        $source = [
+            "firstName" => "Василий",
+            "lastName" => "Пупкин",
+            "address" => [
+                "street" => "Kuznecova",
+                "city" => "Taipei"
+            ]
+        ];
+
+        $result = $rule->validate($source);
+        var_dump($result->getErrors());
+        $this->assertEquals($source, $result->getNormalizedValues());
     }
 
-    public function testRecursiveStructure()
+    public function testNegativeRecursiveStructure()
     {
-        $substructure = ['name' => (new StringType()), 'phone' => (new RussianFederalPhoneNumber()), 'contacts' => (new ArraySameType(StringType::class))];
-        $structure = ["id" => (new IntegerType()), "userdata" => (new ArrayStructure($substructure))];
+        $rule = new ArrayStructure([
+            "firstName" => new StringType(),
+            "lastName" => new StringType(),
+            "address" => new ArrayStructure([
+                "street" => new StringType(),
+                "city" => new StringType(),
+            ])
+        ]);
 
-        $rule = new ArrayStructure($structure);
+        $source = [
+            "firstName" => "Василий",
+            "lastName" => "Пупкин",
+            "address" => 12
+        ];
 
-        $this->assertNotNull($rule->validate(["id" => 1, "userdata" => ['name' => 'ivan', "phone" => "+79963433704", "contacts" => ['John', 'Ada']]])->getValidatedValue());
-        $this->assertNotNull($rule->validate(["id" => 1, "userdata" => ['name' => 44, "phone" => "+79963433704"]])->getMessage());
+        $errors = ["address" => [
+            "self" => "Input incorrect, provide Array"
+        ]];
+
+//        $errors = ["address" => ["address isn't a structure"]];
+
+        $result = $rule->validate($source);
+
+        $this->assertEquals($errors, $result->getErrors());
+    }
+
+    public function testRecursiveStructureKeyWrongType()
+    {
+        $rule = new ArrayStructure([
+            "firstName" => new StringType(),
+            "lastName" => new StringType(),
+        ]);
+
+        $result = $rule->validate([
+            "firstName" => "Василий",
+            "lastName" => 12
+        ]);
+
+        $this->assertEquals(null, $result->getNormalizedValues());
+
+        $this->assertEquals(['lastName' => "This input must be a string"], $result->getErrors());
+    }
+
+    public function testRecursiveStructureFailKeyDoesntExist()
+    {
+        $rule = new ArrayStructure([
+            "firstName" => new StringType(),
+            "lastName" => new StringType(),
+        ]);
+
+        $result = $rule->validate([
+            "firstName" => "Василий",
+            "last" => "Пупкин"
+        ]);
+
+        $this->assertNotEquals([
+            "firstName" => "Василий",
+            "lastName" => "Пупкин"
+        ], $result->getNormalizedValues());
+
+        $error = ["lastName" => "Key incorrect"];
+
+        $this->assertEquals($error, $result->getErrors());
     }
 }

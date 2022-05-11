@@ -2,29 +2,55 @@
 
 namespace Dima\Sanitizer\Rule;
 
-class ArrayStructure extends AbstractRule
+use Dima\Sanitizer\ValidationResult;
+
+class ArrayStructure implements RuleInterface, ArrayRuleInterface
 {
-    protected string $message = 'This input must have correct structure';
+    protected string $message = 'This input must have correct structure!';
+    private array $rulesMapping;
 
-    public function validate($value): AbstractRule
+    public function __construct(array $rulesMapping)
     {
-        $this->reset();
-
-        foreach (new \RecursiveIteratorIterator(new \RecursiveArrayIterator($value), \RecursiveIteratorIterator::CATCH_GET_CHILD) as $key => $item) {
-            if (!is_int($key)) {
-                $rule = $this->options[$key];
-
-                $rule->validate($item);
-
-                if ($rule->hasError()) {
-                    $this->setError();
-                    break;
-                }
+        foreach ($rulesMapping as $key => $rule) {
+            if (!$rule instanceof RuleInterface) {
+                throw new \Exception("Element '$key' must implement RuleInterface");
             }
         }
 
-        $this->validatedValue = $this->hasError() ? null : $value;
+        $this->rulesMapping = $rulesMapping;
+    }
 
-        return $this;
+    public function validate($value): ValidationResult
+    {
+        $validationResult = new ValidationResult();
+
+        if (!is_array($value)) {
+            $validationResult->pushError("self", "Input incorrect, provide Array");
+
+            return $validationResult;
+        }
+
+        foreach ($this->rulesMapping as $key => $rule) {
+            if (!array_key_exists($key, $value)) {
+                $validationResult->pushError($key, "Key incorrect");
+                continue;
+            }
+
+            $ruleResult = $rule->validate($value[$key]);
+
+            if ($rule instanceof ArrayRuleInterface) {
+                $validationResult->pushNormalizedValue($key, $ruleResult->getNormalizedValues());
+                if ($ruleResult->hasError) $validationResult->pushError($key, $ruleResult->getErrors());
+                continue;
+            }
+
+            if ($ruleResult->hasError) {
+                $validationResult->pushError($key, $ruleResult->getErrorMessage());
+            } else {
+                $validationResult->pushNormalizedValue($key, $ruleResult->getNormalizedValue());
+            }
+
+        }
+        return $validationResult;
     }
 }

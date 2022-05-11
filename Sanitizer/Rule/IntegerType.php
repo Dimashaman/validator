@@ -2,20 +2,22 @@
 
 namespace Dima\Sanitizer\Rule;
 
-class IntegerType extends AbstractRule
+use Dima\Sanitizer\RuleResult;
+
+class IntegerType implements RuleInterface
 {
     protected string $message = 'This input must be an integer number';
 
-    public function validate($value): AbstractRule
+    public function validate($value): RuleResult
     {
-        $this->reset();
+        $validationResult = new RuleResult();
 
         if (filter_var($value, FILTER_VALIDATE_INT) || (string)$value === '0') {
-            $this->validatedValue = (int)$value;
+            $validationResult->normalizedValue = (int)$value;
         } else {
-            $this->setError();
+            $validationResult->setError($this->message);
         }
 
-        return $this;
+        return $validationResult;
     }
 }

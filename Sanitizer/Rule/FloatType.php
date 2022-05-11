@@ -2,20 +2,22 @@
 
 namespace Dima\Sanitizer\Rule;
 
-class FloatType extends AbstractRule
+use Dima\Sanitizer\RuleResult;
+
+class FloatType implements RuleInterface
 {
     protected string $message = 'This input must be a float number';
 
-    public function validate($value): AbstractRule
+    public function validate($value): RuleResult
     {
-        $this->reset();
+        $validationResult = new RuleResult();
 
         if (is_float($value)) {
-            $this->validatedValue = floatval($value);
+            $validationResult->normalizedValue = floatval($value);
         } else {
-            $this->setError();
+            $validationResult->setError($this->message);
         }
 
-        return $this;
+        return $validationResult;
     }
 }

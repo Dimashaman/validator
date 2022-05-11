@@ -2,53 +2,23 @@
 
 namespace Dima\Sanitizer;
 
+use Dima\Sanitizer\Rule\RuleInterface;
 use Exception;
 use InvalidArgumentException;
 
 class Sanitizer
 {
     private RuleSet $ruleSet;
-
-    /**
-     * @param RuleSet $ruleSet
-     */
-    public function setRuleSet(RuleSet $ruleSet): void
-    {
-        $this->ruleSet = $ruleSet;
-    }
-
-    /**
-     * @param DataSet $dataSet
-     */
-    public function setDataSet(DataSet $dataSet): void
-    {
-        $this->dataSet = $dataSet;
-    }
-
     private DataSet $dataSet;
-    private array $errors;
-    private array $result;
 
     /**
-     * @return array
+     * @param RuleInterface[] $rules
+     * @param string $json
      */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    /**
-     * @return array
-     */
-    public function getResult(): array
-    {
-        return $this->result;
-    }
-
     public function __construct(array $rules, string $json)
     {
         if (!$rules) {
-            throw new InvalidArgumentException('Data passed to validator is not an array');
+            throw new InvalidArgumentException('Rules passed to sanitizer is not an array');
         }
 
         if (!$this->isJson($json)) {
@@ -62,10 +32,8 @@ class Sanitizer
     /**
      * @throws Exception
      */
-    public function validate(): array
+    public function sanitize(): array
     {
-        $this->reset();
-
         $result = [];
         $errors = [];
 
@@ -77,24 +45,21 @@ class Sanitizer
         foreach ($this->dataSet->getData() as $key => $value) {
             $validationResult = $this->ruleSet->getByKey($key)->validate($value);
 
-            if ($validationResult->hasError()) {
-                $errors[$key] = $validationResult->getMessage();
+            if ($validationResult->hasError) {
+                $errors[$key] = $validationResult->getErrorMessage();
             } else {
-                $result[$key] = $validationResult->getValidatedValue();
+                $result[$key] = $validationResult->getNormalizedValue();
             }
 
         }
 
-        $this->errors = $errors;
-        $this->result = $result;
+        if (count($errors)) {
+            $result = null;
 
-        return count($errors) ? $errors : $result;
-    }
+            return $errors;
+        }
 
-    private function reset(): void
-    {
-        $this->errors = [];
-        $this->result = [];
+        return $result;
     }
 
     private function isJson($string): bool
